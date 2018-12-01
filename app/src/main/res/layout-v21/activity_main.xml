@@ -1,0 +1,209 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <Button
+        android:id="@+id/buttonScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:text="@string/scan" />
+
+    <TextView
+        android:id="@+id/judul1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/buttonScan"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:text="@string/bluetoothstatus"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/btStatus"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/judul1"
+        android:layout_alignBottom="@+id/buttonScan"
+        android:text="@string/kalaugatersambung"
+        android:textStyle="italic" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/btStatus"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/Gray" />
+
+    <TextView
+        android:id="@+id/judul2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/divider"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/sensor_status"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/motionstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/judul2"
+        android:layout_alignStart="@+id/judul1"
+        android:layout_marginTop="5dp"
+        android:text="@string/motionoff"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/hrstatus"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/motionstatus"
+        android:layout_alignStart="@+id/judul1"
+        android:layout_marginTop="0dp"
+        android:text="@string/hroff"
+        android:textStyle="italic" />
+
+    <!--<Button-->
+        <!--android:id="@+id/buttonSetting"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/divider2"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_marginTop="70dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:text="@string/settingb" />-->
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/hrstatus"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/Gray" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:src="@drawable/bggraygreen"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/judul3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/divider2"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/choose_mode"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/mode_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/judul3"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="5dp">
+
+        <RadioButton
+            android:id="@+id/modedefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/default_mode" />
+
+        <RadioButton
+            android:id="@+id/modemotiontest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test_mode" />
+
+        <RadioButton
+            android:id="@+id/modeathlete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/athlete_mode" />
+
+    </RadioGroup>
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/mode_select"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/Gray" />
+
+
+    <TextView
+        android:id="@+id/heartrateN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_above="@id/bpm"
+        android:textColor="@color/button_material_light"
+        android:layout_marginStart="16dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="90sp"
+        android:text="00"/>
+
+    <TextView
+        android:id="@+id/bpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="100dp"
+        android:text="@string/beats_per_minute"
+        android:textSize="28sp" />
+
+    <ImageView
+        android:id="@+id/sensorstatusx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/exclamation" />
+
+    <ImageView
+        android:id="@+id/sensorstatusv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/checkmark"
+        android:visibility="invisible" />
+
+</RelativeLayout>
