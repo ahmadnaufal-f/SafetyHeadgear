@@ -1,20 +1,35 @@
 package com.dfrobot.angelo.blunobasicdemo;
 
-import android.content.Context;
-import android.os.Bundle;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ScrollView;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import static com.dfrobot.angelo.blunobasicdemo.R.raw.alarm_beeps;
 
 public class MainActivity  extends BlunoLibrary {
 	private Button buttonScan;
-	private Button buttonSerialSend;
-	private EditText serialSendText;
-	private TextView serialReceivedText;
+    private TextView btstatus;
+	private TextView mtstatus;
+	private TextView hrstatus;
+	private TextView heartraten;
+	private ImageView gambarwarna;
+	public int motionstatus = 0;
+	public int ppgstatus = 0;
+	int drowsycount = 0;
+    private String selection;
+    private int modeselected;
+    MediaPlayer beepbeep;
+    public AlertDialog alert;
+    public AlertDialog alertb;
+    private ImageView sensorstatusv;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,21 +40,16 @@ public class MainActivity  extends BlunoLibrary {
 
         serialBegin(115200);													//set the Uart Baudrate on BLE chip to 115200
 
-        serialReceivedText=(TextView) findViewById(R.id.serialReveicedText);	//initial the EditText of the received data
-        serialSendText=(EditText) findViewById(R.id.serialSendText);			//initial the EditText of the sending data
+        btstatus = (TextView) findViewById(R.id.btStatus);
+        mtstatus = (TextView) findViewById(R.id.motionstatus);
+        hrstatus = (TextView) findViewById(R.id.hrstatus);
+		heartraten = (TextView) findViewById(R.id.heartrateN);
+        buttonScan = (Button) findViewById(R.id.buttonScan);
+        RadioGroup pilihmode = (RadioGroup) findViewById(R.id.mode_select);
+        gambarwarna = (ImageView) findViewById(R.id.imageView2);
+        beepbeep = MediaPlayer.create(MainActivity.this, R.raw.alarm_beeps);
+        sensorstatusv = (ImageView) findViewById(R.id.sensorstatusv);
 
-        buttonSerialSend = (Button) findViewById(R.id.buttonSerialSend);		//initial the button for sending the data
-        buttonSerialSend.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-				serialSend(serialSendText.getText().toString());				//send the data to the BLUNO
-			}
-		});
-
-        buttonScan = (Button) findViewById(R.id.buttonScan);					//initial the button for scanning the BLE device
         buttonScan.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -49,9 +59,27 @@ public class MainActivity  extends BlunoLibrary {
 				buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
 			}
 		});
+
+        pilihmode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i){
+                    case 2131165236:
+                        serialSend("932");
+                        break;
+                    case 2131165238:
+                        serialSend("931");
+                        break;
+                    default:
+                        serialSend("930");
+                        break;
+                }
+            }
+        });
 	}
 
-	protected void onResume(){
+
+    protected void onResume(){
 		super.onResume();
 		System.out.println("BlUNOActivity onResume");
 		onResumeProcess();														//onResume Process by BlunoLibrary
@@ -86,13 +114,15 @@ public class MainActivity  extends BlunoLibrary {
 	public void onConectionStateChange(connectionStateEnum theConnectionState) {//Once connection state changes, this function will be called
 		switch (theConnectionState) {											//Four connection state
 		case isConnected:
-			buttonScan.setText("Connected");
+			buttonScan.setText("Disconnect");
+			btstatus.setText(R.string.kalautersambung);
 			break;
 		case isConnecting:
 			buttonScan.setText("Connecting");
 			break;
 		case isToScan:
 			buttonScan.setText("Scan");
+            btstatus.setText(R.string.kalaugatersambung);
 			break;
 		case isScanning:
 			buttonScan.setText("Scanning");
@@ -107,10 +137,98 @@ public class MainActivity  extends BlunoLibrary {
 
 	@Override
 	public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
-		// TODO Auto-generated method stub
-		serialReceivedText.append(theString);							//append the text into the EditText
-		//The Serial data from the BLUNO may be sub-packaged, so using a buffer to hold the String is a good choice.
-		((ScrollView)serialReceivedText.getParent()).fullScroll(View.FOCUS_DOWN);
+        char[] dataarray;
+        double heartrate = 0;
+
+        if(theString.length() > 15) {
+            dataarray = theString.toCharArray();
+            for (int i = dataarray.length - 1; i > 7; i--) {
+                if (dataarray[i] == '1') {
+                    heartrate = heartrate + Math.pow(2, 15 - i);
+                }
+            }
+
+            heartraten.setText(String.valueOf((int) heartrate));
+
+            //motion sensor status
+            if (dataarray[3] == '1') {
+                motionstatus = 1;
+                mtstatus.setText(R.string.motionon);
+            } else {
+                motionstatus = 0;
+                mtstatus.setText(R.string.motionoff);
+            }
+
+            //ppg sensor status
+            if (dataarray[4] == '1') {
+                if (dataarray[5] == '0') {
+                    ppgstatus = 1;
+                    hrstatus.setText(R.string.hrwarning);
+                } else {
+                    ppgstatus = 2;
+                    hrstatus.setText(R.string.hron);
+                    if(motionstatus == 1){
+                        sensorstatusv.setVisibility(View.VISIBLE);
+                    }
+                }
+            } else {
+                ppgstatus = 0;
+                hrstatus.setText(R.string.hroff);
+            }
+
+            //ngantuk status
+            if (dataarray[6] == '1') {
+                if (dataarray[7] == '0') {
+                    if(drowsycount == 0)  drowsydetected();
+                }
+                else if (dataarray[7] == '1'){
+                    if(drowsycount == 1)  heavydrowsy();
+                }
+            }
+        }
 	}
 
+    public void heavydrowsy() {
+        gambarwarna.setImageResource(R.drawable.bggrayred);
+        beepbeep.start();
+        if(alertb != null && alertb.isShowing() ) return;
+        AlertDialog.Builder b_builder = new AlertDialog.Builder(MainActivity.this);
+        b_builder.setTitle("Heavy Drowsiness Detected")
+                .setMessage(R.string.ngantukberat)
+                .setCancelable(false)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        drowsycount = 2;
+                        beepbeep.stop();
+                    }
+                });
+        alertb = b_builder.create();
+        if (!alertb.isShowing()) {
+            alertb.show();
+        }
+    }
+
+    public void drowsydetected(){
+	    gambarwarna.setImageResource(R.drawable.bggrayyellow);
+	    beepbeep.start();
+        if(alert != null && alert.isShowing() ) return;
+        AlertDialog.Builder a_builder = new AlertDialog.Builder(MainActivity.this);
+        a_builder.setTitle("Drowsiness Detected")
+                .setMessage(R.string.ngantukdikit)
+                .setCancelable(false)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                        drowsycount = 1;
+                        beepbeep.stop();
+                    }
+                });
+        alert = a_builder.create();
+        if (!alert.isShowing()) {
+            alert.show();
+        }
+    }
 }
