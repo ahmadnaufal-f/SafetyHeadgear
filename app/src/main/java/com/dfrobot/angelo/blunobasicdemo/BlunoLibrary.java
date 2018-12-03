@@ -1,10 +1,6 @@
 package com.dfrobot.angelo.blunobasicdemo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.os.Handler;
-import android.os.IBinder;
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,6 +17,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +30,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract  class BlunoLibrary  extends Activity{
 
 	private Context mainContext=this;
+	private int LOCATION_PERMISSION_CODE = 1;
 
 	
 //	public BlunoLibrary(Context theContext) {
@@ -49,10 +54,9 @@ public abstract  class BlunoLibrary  extends Activity{
 	}
 	
 	private int mBaudrate=115200;	//set the default baud rate to 115200
-	private String mPassword="AT+PASSWOR=DFRobot\r\n";
-	
-	
-	private String mBaudrateBuffer = "AT+CURRUART="+mBaudrate+"\r\n";
+
+
+    private String mBaudrateBuffer = "AT+CURRUART="+mBaudrate+"\r\n";
 	
 //	byte[] mBaudrateBuffer={0x32,0x00,(byte) (mBaudrate & 0xFF),(byte) ((mBaudrate>>8) & 0xFF),(byte) ((mBaudrate>>16) & 0xFF),0x00};;
 	
@@ -145,12 +149,12 @@ public abstract  class BlunoLibrary  extends Activity{
 		        }
 		        else{
 
-					System.out.println("onListItemClick " + device.getName());
+					System.out.println("onListItemClick " + device.getName().toString());
 
 					System.out.println("Device Name:"+device.getName() + "   " + "Device Name:" + device.getAddress());
 
-					mDeviceName= device.getName();
-					mDeviceAddress=device.getAddress();
+					mDeviceName=device.getName().toString();
+					mDeviceAddress=device.getAddress().toString();
 
 		        	if (mBluetoothLeService.connect(mDeviceAddress)) {
 				        Log.d(TAG, "Connect request success");
@@ -308,7 +312,8 @@ public abstract  class BlunoLibrary  extends Activity{
             		if (intent.getStringExtra(BluetoothLeService.EXTRA_DATA).toUpperCase().startsWith("DF BLUNO")) {
 						mBluetoothLeService.setCharacteristicNotification(mSCharacteristic, false);
 						mSCharacteristic=mCommandCharacteristic;
-						mSCharacteristic.setValue(mPassword);
+                        String mPassword = "AT+PASSWORD=DFRobot\r\n";
+                        mSCharacteristic.setValue(mPassword);
 						mBluetoothLeService.writeCharacteristic(mSCharacteristic);
 						mSCharacteristic.setValue(mBaudrateBuffer);
 						mBluetoothLeService.writeCharacteristic(mSCharacteristic);
@@ -342,45 +347,59 @@ public abstract  class BlunoLibrary  extends Activity{
 	
     void buttonScanOnClickProcess()
     {
-    	switch (mConnectionState) {
-		case isNull:
-			mConnectionState=connectionStateEnum.isScanning;
-			onConectionStateChange(mConnectionState);
-			scanLeDevice(true);
-			mScanDeviceDialog.show();
-			break;
-		case isToScan:
-			mConnectionState=connectionStateEnum.isScanning;
-			onConectionStateChange(mConnectionState);
-			scanLeDevice(true);
-			mScanDeviceDialog.show();
-			break;
-		case isScanning:
-			
-			break;
+    	if(ContextCompat.checkSelfPermission(BlunoLibrary.this,
+				Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+			switch (mConnectionState) {
+				case isNull:
+					mConnectionState = connectionStateEnum.isScanning;
+					onConectionStateChange(mConnectionState);
+					scanLeDevice(true);
+					mScanDeviceDialog.show();
+					break;
+				case isToScan:
+					mConnectionState = connectionStateEnum.isScanning;
+					onConectionStateChange(mConnectionState);
+					scanLeDevice(true);
+					mScanDeviceDialog.show();
+					break;
+				case isScanning:
 
-		case isConnecting:
-			
-			break;
-		case isConnected:
-			mBluetoothLeService.disconnect();
-            mHandler.postDelayed(mDisonnectingOverTimeRunnable, 10000);
+					break;
+
+				case isConnecting:
+
+					break;
+				case isConnected:
+					mBluetoothLeService.disconnect();
+					mHandler.postDelayed(mDisonnectingOverTimeRunnable, 10000);
 
 //			mBluetoothLeService.close();
-			mConnectionState=connectionStateEnum.isDisconnecting;
-			onConectionStateChange(mConnectionState);
-			break;
-		case isDisconnecting:
-			
-			break;
+					mConnectionState = connectionStateEnum.isDisconnecting;
+					onConectionStateChange(mConnectionState);
+					break;
+				case isDisconnecting:
 
-		default:
-			break;
+					break;
+
+				default:
+					break;
+			}
+		}
+		else{
+    		requestlocationpermission();
 		}
     	
-    	
     }
-    
+
+	private void requestlocationpermission() {
+    	if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+
+		}
+		else{
+    		ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+		}
+	}
+
 	void scanLeDevice(final boolean enable) {
 		if (enable) {
 			// Stops scanning after a pre-defined scan period.

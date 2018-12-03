@@ -1,0 +1,183 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <Button
+        android:id="@+id/buttonScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/imageView"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/scan"
+        android:backgroundTint="@color/Accent"/>
+
+    <TextView
+        android:id="@+id/judul1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/imageView"
+        android:fontFamily="@font/palanquin_dark"
+        android:text="@string/bluetoothstatus"
+        android:textColor="@color/Gray"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/btStatus"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/judul1"
+        android:layout_alignStart="@+id/judul1"
+        android:fontFamily="@font/quattrocento_sans_bold_italic"
+        android:text="@string/kalaugatersambung"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/judul2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btStatus"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="19dp"
+        android:fontFamily="@font/palanquin_dark"
+        android:text="@string/sensor_status"
+        android:textColor="@color/Gray"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/motionstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/judul2"
+        android:layout_alignStart="@+id/judul1"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/quattrocento_sans_bold_italic"
+        android:text="@string/motionoff"
+        android:textStyle="italic"
+        android:elevation="1dp"/>
+
+    <TextView
+        android:id="@+id/hrstatus"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/motionstatus"
+        android:layout_alignStart="@+id/judul1"
+        android:layout_marginTop="0dp"
+        android:fontFamily="@font/quattrocento_sans_bold_italic"
+        android:text="@string/hroff"
+        android:textStyle="italic"
+        android:elevation="1dp"/>
+
+    <!--<Button-->
+        <!--android:id="@+id/buttonSetting"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/divider2"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_marginTop="70dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:text="@string/settingb" />-->
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bggraygreen"
+        tools:ignore="ContentDescription"
+        android:elevation="0dp"/>
+
+
+    <TextView
+        android:id="@+id/heartrateN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bpm"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/roboto_condensed_bold"
+        android:text="00"
+        android:textColor="@color/Gray"
+        android:textSize="90sp" />
+
+    <TextView
+        android:id="@+id/bpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="60dp"
+        android:fontFamily="@font/palanquin_dark"
+        android:text="@string/beats_per_minute"
+        android:textSize="28sp" />
+
+    <ImageView
+        android:id="@+id/sensorstatusx"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/judul2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/exclamation" />
+
+    <ImageView
+        android:id="@+id/sensorstatusv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@id/judul2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/checkmark"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/settings"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hrstatus"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/show_settings"
+        android:elevation="3dp"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/header" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:elevation="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hrstatus"
+        android:layout_marginTop="5dp"
+        android:visibility="invisible"
+        />
+
+
+</RelativeLayout>
